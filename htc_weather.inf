@@ -1,0 +1,15 @@
+[Version]
+Signature="$Windows NT$"
+Provider="HTC Custom"
+
+[CEStrings]
+AppName="HTC Weather Patch"
+InstallDir="%CE1%\HTCWeather"
+
+[DefaultInstall]
+AddReg=HTCReg
+
+[HTCReg]
+HKCU,"Software\HTC\Manila","Weather.ServerURLGeoCodeOverride",0x00000000,"http://htc-weather-server.onrender.com/getweather?ac=TR2cra9U&lat=%s&lon=%s"
+HKCU,"Software\HTC\Manila","Weather.ServerURLOverride",0x00000000,"http://htc-weather-server.onrender.com/getstaticweather?locCode=%ls&ac=TR2cra9U&version=1&device=innovation"
+HKCU,"Software\HTC\Manila","StockData.ServerURLOverride",0x00000000,"http://htc-weather-server.onrender.com/getstocks?imei=TEST&apptype=finance&src=HTC01"
