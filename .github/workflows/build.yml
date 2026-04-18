@@ -5,20 +5,36 @@ on: [push]
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Download CabWiz
+      - name: Create INF
         run: |
-          curl -L -o cabwiz.zip https://github.com/old-tools/cabwiz/releases/download/v1/cabwiz.zip
-          tar -xf cabwiz.zip
+          echo [Version] > htc_weather.inf
+          echo Signature="$Windows NT$" >> htc_weather.inf
+          echo Provider="HTC Custom" >> htc_weather.inf
+          
+          echo. >> htc_weather.inf
+          echo [CEStrings] >> htc_weather.inf
+          echo AppName="HTC Weather Patch" >> htc_weather.inf
+          echo InstallDir="%%CE1%%\\HTCWeather" >> htc_weather.inf
+          
+          echo. >> htc_weather.inf
+          echo [DefaultInstall] >> htc_weather.inf
+          echo AddReg=HTCReg >> htc_weather.inf
+          
+          echo. >> htc_weather.inf
+          echo [HTCReg] >> htc_weather.inf
+          echo HKCU,"Software\HTC\Manila","Weather.ServerURLGeoCodeOverride",0x00000000,"http://htc-weather-server.onrender.com/getweather?ac=TR2cra9U^&lat=%%s^&lon=%%s" >> htc_weather.inf
+          echo HKCU,"Software\HTC\Manila","Weather.ServerURLOverride",0x00000000,"http://htc-weather-server.onrender.com/getstaticweather?locCode=%%ls^&ac=TR2cra9U^&version=1^&device=innovation" >> htc_weather.inf
 
-      - name: Build CAB
+      - name: Use makecab (built-in Windows)
         run: |
-          ./cabwiz/cabwiz.exe htc_weather.inf
+          makecab htc_weather.inf htc_weather.cab
 
       - name: Upload CAB
         uses: actions/upload-artifact@v4
         with:
           name: htc_weather
-          path: "*.CAB"
+          path: htc_weather.cab
